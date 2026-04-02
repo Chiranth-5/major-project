@@ -1,0 +1,45 @@
+Since you are building a tool for AI infrastructure, you need to know about the tools that currently dominate the industry. These are the "competitors" or "gold standards" your project will be compared against.
+
+In 2026, the focus has shifted from simple CPU/GPU tracking to observability (understanding why something is slow) and distributed efficiency.
+
+1. The "Big Three" for GPU & Systems
+If you are working with NVIDIA hardware (like your L40S and P100), these are the industry-standard tools:
+
+NVIDIA Nsight Systems: The most powerful tool for visualizing how a model moves across the CPU, GPU, and Network. It shows you the "timeline" of execution.
+
+DLProf (Deep Learning Profiler): Specifically designed to see if your AI model is actually using the Tensor Cores on your GPU. If you aren't using them, your model is running way slower than it should.
+
+NVIDIA Triton Inference Server: While technically a "server," it includes built-in metrics for Inference Profiling. It tracks how long each request takes and where the delay is.
+
+2. Distributed & Cluster Monitoring
+Since you have 18 nodes, you should be aware of tools that look at the whole cluster at once:
+
+Prometheus + Grafana: The "Classic Duo." Prometheus collects the data (CPU %, RAM used, Network speed) and Grafana displays it. In 2026, the demand is for AI-specific Grafana dashboards that track "Power-Compute Effectiveness" (PCE).
+
+Metoro: A newer, high-demand tool that uses eBPF (a Linux kernel technology). It can "spy" on your code and find bottlenecks without you having to change a single line of your C++ code.
+
+Weights & Biases (W&B): Extremely popular in AI research. It doesn't just profile hardware; it tracks your model's accuracy, loss, and system usage in one place.
+
+3. Python-Specific Profilers (For AI Logic)
+Most AI logic is written in Python, which is often the source of "bottlenecks" before the data even reaches the C++ layer:
+
+Scalene: A high-demand profiler that breaks down exactly how much time is spent in Python code vs. C++ code vs. System code. This is crucial because if Python is slow, your 18 nodes won't matter.
+
+Py-Spy: A "sampling" profiler. It lets you see what a running program is doing without stopping it.
+
+
+
+
+How this helps your PaperWhen you write your paper, you will likely include a section called "Related Work."
+You will write something like:"While tools like NVIDIA Nsight Systems provide excellent single-node visibility, 
+they lack the adaptive partitioning logic required for mid-scale heterogeneous clusters. Our tool fills this gap by...
+"Summary Table for Your ProjectTool CategoryTop Tool (2026)Why it matters to youGPU Deep DiveNsight SystemsTo see if your 
+GPU is "waiting" for the CPU.Cluster HealthPrometheus/GrafanaTo see if Node 5 is "overloaded" by someone else.
+Python LogicScaleneTo ensure your "Profiler Tool" itself isn't slow.Distributed AIPyTorch ProfilerThe standard way 
+researchers currently "guess" their speed.
+
+Tool Category,Top Tool (2026),Why it matters to you
+GPU Deep Dive,Nsight Systems,"To see if your GPU is ""waiting"" for the CPU."
+Cluster Health,Prometheus/Grafana,"To see if Node 5 is ""overloaded"" by someone else."
+Python Logic,Scalene,"To ensure your ""Profiler Tool"" itself isn't slow."
+Distributed AI,PyTorch Profiler,"The standard way researchers currently ""guess"" their speed."
