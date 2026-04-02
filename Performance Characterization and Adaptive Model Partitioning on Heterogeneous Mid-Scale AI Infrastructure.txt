@@ -1,0 +1,57 @@
+The Project Title
+"Performance Characterization and Adaptive Model Partitioning on Heterogeneous Mid-Scale AI Infrastructure"
+
+The 6-Month Execution Roadmap
+Month 1: The Baseline (1 Credit) — "The Speed of a Single Node"
+Focus: Master the fundamental limits of the Intel Xeon CPUs.
+
+Task: Write a C++ program for Matrix Multiplication. Benchmark it using 1 thread vs. 24 threads.
+
+The Goal: Calculate Peak GFLOPS (Giga-Floating Point Operations Per Second) for a single node.
+
+Deliverable: A "Scaling Graph" showing where adding more CPU threads stops helping.
+
+Month 2: The Interconnect (1 Credit) — "The Speed of the Hallway"
+Focus: Measuring the 2Tb/s Mellanox Switch.
+
+Task: Learn MPI (Message Passing Interface) basics. Write a "Ping-Pong" script to send 10MB, 100MB, and 1GB tensors between Node 1 and Node 18.
+
+The Goal: Find the Network Latency (delay) and Effective Bandwidth.
+
+Deliverable: A "Latency Matrix" showing which nodes talk to each other the fastest.
+
+Month 3: The Accelerator (1 Credit) — "The GPU Factor"
+Focus: Understanding the L40S and P100 GPUs.
+
+Task: Write a simple CUDA kernel. Compare the time it takes to do math on the GPU versus the time it takes to move data from the CPU to the GPU (PCIe overhead).
+
+The Goal: Identify the Break-even Point (How large must a model be before the GPU is actually faster than the CPU?).
+
+Deliverable: A comparison chart of CPU vs. P100 vs. L40S performance.
+
+Month 4: The Profiler Engine (1 Credit) — "The Intelligent Sensor"
+Focus: Building the monitoring tool.
+
+Task: Create a Python-based Cluster Scanner. It must "ping" all 18 nodes and collect their current CPU/GPU load and network health into a JSON file.
+
+The Goal: Create a real-time "Snapshot" of the cluster state.
+
+Deliverable: A backend script that can detect if Node 5 is "congested" or "slow."
+
+Month 5: The Partitioning Logic (1 Credit) — "The Traffic Controller"
+Focus: The "Adaptive" part of your title.
+
+Task: Write an algorithm that takes an AI model (like a Transformer) and uses the data from Month 4 to decide: "Layers 1-10 go to the GPU; Layers 11-20 go to the 4 fastest CPUs."
+
+The Goal: Dynamic Load Balancing.
+
+Deliverable: The "Profiler Tool" prototype that automatically suggests the best node configuration.
+
+Month 6: The Empirical Publication (1 Credit) — "The Proof"
+Focus: Final testing and Paper writing.
+
+Task: Run the "Before vs. After" test. Run an AI model "blindly" (standard way) vs. using your "Profiler Tool."
+
+The Goal: Prove that your tool makes the AI 20-40% faster on the 18-node cluster.
+
+Deliverable: Final 6-credit Thesis and a submitted research paper to an IEEE or ACM conference.
