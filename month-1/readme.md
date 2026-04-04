@@ -19,3 +19,7 @@ Node 18 (The Pascal Node): This node contains 4x NVIDIA Tesla P100 GPUs.
 
 All 18 nodes are connected by a Mellanox SwitchX-2 with a 2Tb/s capacity, which is incredibly fast for a mid-sized cluster.
 
+tasks:
+1.calculate gflops for my laptop
+2. calculate gflops for a single node in heracels.
+

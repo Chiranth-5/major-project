@@ -8,3 +8,31 @@
 
 // Step 1: Create basic_cpu.cpp
 // Copy this code. It performs 100 million square root operations on a single thread.
+
+#include <iostream>
+#include <cmath>
+#include <chrono>
+
+int main() 
+{
+    const int iterations = 100000000; // 100 Million
+    double sum = 0.0;
+
+    auto start = std::chrono::high_resolution_clock::now();
+
+    for (int i = 0; i < iterations; i++) 
+    {
+        sum += std::sqrt(i);
+    }
+
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+
+    double gflops = (iterations / elapsed.count()) / 1e9;
+
+    std::cout << "Time: " << elapsed.count() << " seconds" << std::endl;
+    std::cout << "Result: " << sum << " (to prevent optimization)" << std::endl;
+    std::cout << "Performance: " << gflops << " GFLOPS" << std::endl;
+
+    return 0;
+}
