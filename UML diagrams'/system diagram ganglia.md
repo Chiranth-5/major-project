@@ -1,0 +1,96 @@
+# Ganglia System Architecture
+
+Single-node Ganglia monitoring setup: one Linux VM (master) running inside UTM on a Mac host. All Ganglia components run on the same VM; the web UI is accessed from the Mac browser.
+
+---
+
+## Deployment Diagram
+
+```mermaid
+flowchart TB
+    subgraph MacHost["Mac Host Machine"]
+        Browser["Safari / Browser"]
+        UTM["UTM Hypervisor"]
+
+        subgraph MasterVM["Master VM (Linux)"]
+            direction TB
+            gmond["gmond<br/>(Metric Collector)<br/>:8649"]
+            gmetad["gmetad<br/>(Meta Daemon)<br/>:8651"]
+            rrd["RRDtool<br/>(Time-Series Storage)"]
+            apache["Apache + PHP"]
+            web["ganglia-webfrontend<br/>(Web UI)<br/>:80"]
+        end
+
+        UTM --- MasterVM
+    end
+
+    gmond -->|"gmetad polls gmond<br/>(XML metrics via TCP)"| gmetad
+    gmetad -->|"Writes / updates<br/>RRD files"| rrd
+    web -->|"PHP reads RRD data<br/>to render graphs"| rrd
+    apache --- web
+    Browser -->|"HTTP<br/>(VM IP or port forward)"| web
+
+    style MacHost fill:#f5f5f5,stroke:#333
+    style MasterVM fill:#e8f4fc,stroke:#2980b9
+    style Browser fill:#fff,stroke:#666
+```
+
+### Deployment notes
+
+| Item | Value |
+|------|-------|
+| Host | Mac |
+| Hypervisor | UTM |
+| VMs | 1 (master only — no separate worker nodes) |
+| Master VM components | gmond, gmetad, RRDtool, Apache, ganglia-webfrontend |
+| Cluster | Single cluster, single node |
+
+---
+
+## Sequence Diagram — Metric Collection to Dashboard
+
+Typical flow: gmond collects host metrics, gmetad polls and stores them in RRD, and the web frontend reads RRD when you open the dashboard in your browser.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as User (Mac Browser)
+    participant OS as Linux VM (OS / Hardware)
+    participant gmond as gmond
+    participant gmetad as gmetad
+    participant RRD as RRDtool
+    participant Web as ganglia-webfrontend<br/>(Apache + PHP)
+
+    loop Every collection interval
+        gmond->>OS: Read system metrics<br/>(CPU, memory, load, etc.)
+        OS-->>gmond: Raw metric data
+        gmond->>gmond: Cache metrics locally
+    end
+
+    loop Every polling interval
+        gmetad->>gmond: Request XML metric tree<br/>(TCP :8649)
+        gmond-->>gmetad: Return XML metrics
+        gmetad->>RRD: Write / update RRD files
+    end
+
+    User->>Web: GET Ganglia dashboard (HTTP)
+    Web->>RRD: Read time-series data for graphs
+    RRD-->>Web: Historical metric values
+    Web-->>User: Render HTML page with graphs
+```
+
+### Sequence notes
+
+1. **gmond** runs continuously on the master VM and collects metrics from the local OS.
+2. **gmetad** polls **gmond** on the same machine (standard single-node setup) and persists data via **RRDtool**.
+3. **ganglia-webfrontend** uses PHP to read RRD files and serve graphs when you open the UI from your Mac.
+
+
+
+4. State Machine Transition Diagram (UML State Machine)
+
+Why it fits: Since you are verifying your findings by running benchmarking programs to compare both tools, you need to show how the system updates a node's state. Ganglia relies on age counters ($tn$, $tmax$, $dmax$). If a worker is under heavy load or drops packets, it transitions from Active to Stale to Dead.
+
+What it exposes for your documentation: It documents how Ganglia handles failures under pressure—by passively dropping nodes out of the XML grid when thresholds breach, rather than actively retrying connections like Prometheus does.
+
+
