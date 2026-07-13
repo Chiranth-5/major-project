@@ -139,6 +139,43 @@ Experimental Comparative Analysis of Cluster Monitoring Frameworks in HPC Enviro
 
 
 
+```
+ganglia-vs-prometheus-hpc-cluster/
+├── README.md                           # Master project overview, executive summary, and portfolio guide
+├── docs/
+│   ├── 01-architecture-deep-dive.md    # Protocol stack & storage model comparison (UDP/Multicast vs. TCP/Unicast/TSDB)
+│   ├── 02-local-sandbox-setup.md       # 3-node UTM/Ubuntu ARM64 local virtualization runbook
+│   ├── 03-experimental-matrix.md       # 4-quadrant benchmark methodology (isolating network noise & multi-tenant stress)
+│   ├── 04-production-18-node-grid.md   # Scaling strategies and grid-level performance findings
+│   └── 05-rootless-userspace-runbook.md  # Documents unprivileged, home-directory binary execution and tmux management
+├── configs/
+│   ├── ganglia/
+│   │   ├── gmond.conf                  # Worker/master gmond daemon configuration
+│   │   └── gmetad.conf                 # Central gmetad aggregation and RRD polling config
+│   └── prometheus/
+│       ├── prometheus.yml              # Standard system-level scrape jobs & targets configuration
+│       ├── node_exporter.service       # Systemd unit file for privileged edge telemetry
+│       └── prometheus-userspace.yml     # User-mode scraping config for unprivileged cluster targets
+└── scripts/
+    ├── ganglia/
+    │   ├── bootstrap_gmond_system.sh    # Installs and configures gmond via apt & systemd (Root)
+    │   ├── bootstrap_gmetad_master.sh   # Installs and configures gmetad + gweb on master (Root)
+    │   └── scale_ganglia_fleet.py       # Orchestrates gmond bindings across cluster nodes
+    ├── prometheus/
+    │   ├── deploy_node_exporter.sh      # Automates system-level node_exporter tarball & service (Root)
+    │   ├── deploy_prometheus_tsdb.sh    # Sets up central Prometheus server and target bindings (Root)
+    │   └── userspace_rootless_deploy.sh # Rootless tarball unpack, custom config, & tmux launcher (User-space)
+    └── benchmarking/
+        ├── scale_orchestration.py       # Coordinates cross-node fleet targets & test cycles
+        └── workload_spike.py            # Generates CPU/memory contention for metric analysis
+```
+
+
+
+
+
+
+
 
 
 
